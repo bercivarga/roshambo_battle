@@ -7,15 +7,15 @@ use enemy::{Enemy, EnemyVersion};
 use macroquad::prelude::*;
 use player::Player;
 
-const ENEMY_COUNT: usize = 20;
+const ENEMY_COUNT: usize = 100;
 
 fn window_conf() -> Conf {
     Conf {
-        window_title: "RPS Battle".to_owned(),
-        fullscreen: false,
-        window_resizable: true,
-        window_width: 1000,
-        window_height: 800,
+        window_title: "Roshambo Battle".to_owned(),
+        fullscreen: true,
+        high_dpi: true,
+        window_width: 1366,
+        window_height: 768,
         ..Default::default()
     }
 }
@@ -25,14 +25,14 @@ async fn main() {
 
     let asset_loader = AssetLoader::new().await;
 
-    let mut player = Player::new(
-        screen_width() / 2.0,
-        screen_height() / 2.0,
-        20.0,
-        20.0,
-        RED,
-        3.0,
-    );
+    let mut player = Player {
+        x: screen_width() / 2.0,
+        y: screen_height() / 2.0,
+        width: 20.0,
+        height: 20.0,
+        color: RED,
+        speed: 3.0,
+    };
 
     let mut enemies = Vec::new();
 
@@ -57,13 +57,26 @@ async fn main() {
         enemies.push(enemy);
     }
 
-    loop {
-        clear_background(WHITE);
+    let mut camera =
+        Camera2D::from_display_rect(Rect::new(0.0, 0.0, screen_width(), screen_height()));
 
+    loop {
+        clear_background(LIGHTGRAY);
+
+        // Player update logic
         player.update_position().draw();
 
+        // Update camera
+        camera.target = vec2(player.x, player.y);
+        set_camera(&camera);
+
+        // Need to create a copy so that we can pass reference without risking mutable references
+        let new_enemies = enemies.to_vec();
+
+        // Enemy update logic
         for enemy in enemies.iter_mut() {
-            enemy.update_position().draw();
+            enemy.draw();
+            enemy.update_position(&new_enemies);
         }
 
         next_frame().await

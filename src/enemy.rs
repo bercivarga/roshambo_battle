@@ -1,11 +1,13 @@
 use macroquad::prelude::*;
 
+#[derive(Clone, PartialEq)]
 pub enum EnemyVersion {
     Rock,
     Paper,
     Scissors,
 }
 
+#[derive(Clone, PartialEq)]
 pub struct Enemy {
     pub x: f32,
     pub y: f32,
@@ -45,7 +47,29 @@ impl Enemy {
         self
     }
 
-    pub fn update_position(&mut self) -> &Self {
+    pub fn update_position(&mut self, enemies: &Vec<Enemy>) -> &Self {
+        let mut closest_enemy = None;
+        let mut closest_distance = f32::MAX;
+
+        for enemy in enemies.iter() {
+            if enemy.version == self.version {
+                continue;
+            }
+
+            let distance = (enemy.x - self.x).powi(2) + (enemy.y - self.y).powi(2);
+
+            if distance < closest_distance {
+                closest_distance = distance;
+                closest_enemy = Some(enemy);
+            }
+        }
+
+        if let Some(enemy) = closest_enemy {
+            let direction = vec2(enemy.x - self.x, enemy.y - self.y).normalize();
+            self.x += direction.x * self.speed;
+            self.y += direction.y * self.speed;
+        }
+
         self
     }
 }

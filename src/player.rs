@@ -10,17 +10,6 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(x: f32, y: f32, width: f32, height: f32, color: Color, speed: f32) -> Self {
-        Self {
-            x,
-            y,
-            width,
-            height,
-            color,
-            speed,
-        }
-    }
-
     pub fn draw(&self) {
         draw_rectangle(self.x, self.y, self.width, self.height, self.color);
     }
