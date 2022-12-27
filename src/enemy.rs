@@ -15,16 +15,11 @@ pub struct Enemy {
     scale: f32,
 }
 
-const DOWN_SCALE: f32 = 10.0;
+const DOWN_SCALE: f32 = 2.0;
 
 impl Enemy {
-    pub async fn new(x: f32, y: f32, speed: f32, version: EnemyVersion) -> Self {
-        let sprite = match version {
-            EnemyVersion::Rock => load_texture("assets/rock.png").await,
-            EnemyVersion::Paper => load_texture("assets/paper.png").await,
-            EnemyVersion::Scissors => load_texture("assets/scissors.png").await,
-        }
-        .unwrap();
+    pub fn new(x: f32, y: f32, speed: f32, version: EnemyVersion, sprite: Texture2D) -> Self {
+        sprite.set_filter(FilterMode::Linear);
 
         Self {
             x,
@@ -50,8 +45,7 @@ impl Enemy {
         self
     }
 
-    pub fn _update_position(&mut self) -> &Self {
-        todo!("Update the position of the enemy");
+    pub fn update_position(&mut self) -> &Self {
         self
     }
 }

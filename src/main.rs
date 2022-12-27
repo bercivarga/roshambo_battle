@@ -1,16 +1,29 @@
+mod asset_loader;
 mod enemy;
 mod player;
 
+use asset_loader::AssetLoader;
 use enemy::{Enemy, EnemyVersion};
 use macroquad::prelude::*;
 use player::Player;
-use std::fmt::Error;
 
 const ENEMY_COUNT: usize = 20;
 
-#[macroquad::main("BasicShapes")]
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "RPS Battle".to_owned(),
+        fullscreen: false,
+        window_resizable: true,
+        window_width: 1000,
+        window_height: 800,
+        ..Default::default()
+    }
+}
+#[macroquad::main(window_conf)]
 async fn main() {
     create_random_seed();
+
+    let asset_loader = AssetLoader::new().await;
 
     let mut player = Player::new(
         screen_width() / 2.0,
@@ -34,7 +47,13 @@ async fn main() {
             _ => unreachable!(),
         };
 
-        let enemy = Enemy::new(x, y, speed, version).await;
+        let sprite = match version {
+            EnemyVersion::Rock => asset_loader.rock,
+            EnemyVersion::Paper => asset_loader.paper,
+            EnemyVersion::Scissors => asset_loader.scissors,
+        };
+
+        let enemy = Enemy::new(x, y, speed, version, sprite);
         enemies.push(enemy);
     }
 
@@ -44,7 +63,7 @@ async fn main() {
         player.update_position().draw();
 
         for enemy in enemies.iter_mut() {
-            enemy.draw();
+            enemy.update_position().draw();
         }
 
         next_frame().await
