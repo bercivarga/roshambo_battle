@@ -84,24 +84,17 @@ impl Enemy {
                 return;
             }
 
-            if self.check_win(enemy) {
-                self.should_remove = false;
-                self.speed -= 0.01;
+            if win_rules(self.version.to_owned(), enemy.version.to_owned()) {
+                self.scale += 0.05;
+                self.speed -= 0.05;
             } else {
                 self.should_remove = true;
             }
         }
     }
-
-    pub fn check_win(&self, other: &Enemy) -> bool {
-        return if win_rules(self.version.to_owned(), other.version.to_owned()) {
-            true
-        } else {
-            false
-        }
-    }
 }
 
+// Basic rock-paper-scissors rules
 pub fn win_rules(ver1: EnemyVersion, ver2: EnemyVersion) -> bool {
     match (ver1, ver2) {
         (EnemyVersion::Rock, EnemyVersion::Scissors) => true,
@@ -117,6 +110,7 @@ pub fn collision_detection(el1: &Enemy, el2: &Enemy) -> bool {
     rect1.overlaps(&rect2)
 }
 
+// Creates hit-box
 fn create_rect(el: &Enemy) -> Rect {
     Rect::new(
         el.x,
