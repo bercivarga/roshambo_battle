@@ -1,3 +1,4 @@
+use crate::asset_loader::AssetLoader;
 use macroquad::prelude::*;
 
 #[derive(Clone, PartialEq)]
@@ -19,6 +20,7 @@ pub struct Enemy {
     pub should_remove: bool,
 }
 
+const ENEMY_COUNT: usize = 1_000;
 const DOWN_SCALE: f32 = 2.0;
 
 impl Enemy {
@@ -122,6 +124,34 @@ fn create_rect(el: &Enemy) -> Rect {
         el.sprite.width() as f32 * el.scale / DOWN_SCALE,
         el.sprite.height() as f32 * el.scale / DOWN_SCALE,
     )
+}
+
+pub fn generate_enemies(asset_loader: &AssetLoader) -> Vec<Enemy> {
+    let mut enemies = vec![];
+    for _ in 0..ENEMY_COUNT {
+        // let x = rand::gen_range(-(MAP_SIZE / 2.0), MAP_SIZE / 2.0);
+        // let y = rand::gen_range(-(MAP_SIZE / 2.0), MAP_SIZE / 2.0);
+        let x = rand::gen_range(0.0, screen_width());
+        let y = rand::gen_range(0.0, screen_height());
+        let speed = rand::gen_range(0.5, 2.0);
+        let version = match rand::gen_range(0, 3) {
+            0 => EnemyVersion::Rock,
+            1 => EnemyVersion::Paper,
+            2 => EnemyVersion::Scissors,
+            _ => unreachable!(),
+        };
+
+        let sprite = match version {
+            EnemyVersion::Rock => asset_loader.rock,
+            EnemyVersion::Paper => asset_loader.paper,
+            EnemyVersion::Scissors => asset_loader.scissors,
+        };
+
+        let enemy = Enemy::new(x, y, speed, version, sprite, enemies.len());
+        enemies.push(enemy);
+    }
+
+    enemies
 }
 
 pub fn update_all_enemies(enemies: &mut Vec<Enemy>) {
