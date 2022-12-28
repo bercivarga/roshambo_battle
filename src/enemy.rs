@@ -82,6 +82,8 @@ impl Enemy {
 
             if self.check_win(enemy) {
                 self.should_remove = true;
+            } else {
+                self.speed += 0.01;
             }
         }
     }

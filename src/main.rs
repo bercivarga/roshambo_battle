@@ -9,6 +9,8 @@ use player::Player;
 
 const ENEMY_COUNT: usize = 1_000;
 
+// const MAP_SIZE: f32 = 2_000.0;
+
 fn window_conf() -> Conf {
     Conf {
         window_title: "Roshambo Battle".to_owned(),
@@ -37,6 +39,8 @@ async fn main() {
     let mut enemies = Vec::new();
 
     for _ in 0..ENEMY_COUNT {
+        // let x = rand::gen_range(-(MAP_SIZE / 2.0), MAP_SIZE / 2.0);
+        // let y = rand::gen_range(-(MAP_SIZE / 2.0), MAP_SIZE / 2.0);
         let x = rand::gen_range(0.0, screen_width());
         let y = rand::gen_range(0.0, screen_height());
         let speed = rand::gen_range(0.5, 2.0);
@@ -79,9 +83,8 @@ async fn main() {
             enemy.update_position(&mut new_enemies);
         }
 
+        // Remove enemies that should be removed
         enemies.retain(|enemy| !enemy.should_remove);
-
-        // TODO: create a new loop to save all losing enemies into a new vector and remove each after
 
         next_frame().await
     }
