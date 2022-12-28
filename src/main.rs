@@ -5,7 +5,7 @@ mod player;
 
 use asset_loader::AssetLoader;
 use camera::Camera as PlayerCamera;
-use enemy::{generate_enemies, update_all_enemies, Enemy, EnemyVersion};
+use enemy::{generate_enemies, update_all_enemies};
 use macroquad::prelude::*;
 use player::Player;
 
