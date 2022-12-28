@@ -3,7 +3,7 @@ mod enemy;
 mod player;
 
 use asset_loader::AssetLoader;
-use enemy::{Enemy, EnemyVersion};
+use enemy::{update_all_enemies, Enemy, EnemyVersion};
 use macroquad::prelude::*;
 use player::Player;
 
@@ -74,23 +74,8 @@ async fn main() {
         camera.target = vec2(player.x, player.y);
         set_camera(&camera);
 
-        // Need to create a copy so that we can pass reference without risking mutable references
-        let mut new_enemies = enemies.to_vec();
-        let mut hits = Vec::new();
-
         // Enemy update logic
-        for enemy in enemies.iter_mut() {
-            let hit = enemy.update_position(&mut new_enemies);
-
-            if let Some(id) = hit {
-                hits.push(id);
-            }
-
-            enemy.draw();
-        }
-
-        // Remove enemies that were hit
-        enemies.retain(|enemy| !hits.contains(&enemy.id));
+        update_all_enemies(&mut enemies);
 
         next_frame().await
     }

@@ -124,6 +124,26 @@ fn create_rect(el: &Enemy) -> Rect {
     )
 }
 
+pub fn update_all_enemies(enemies: &mut Vec<Enemy>) {
+    // Need to create a copy so that we can pass reference without risking mutable references
+    let mut new_enemies = enemies.to_vec();
+    let mut hits = Vec::new();
+
+    // Enemy update logic
+    for enemy in enemies.iter_mut() {
+        let hit = enemy.update_position(&mut new_enemies);
+
+        if let Some(id) = hit {
+            hits.push(id);
+        }
+
+        enemy.draw();
+    }
+
+    // Remove enemies that were hit
+    enemies.retain(|enemy| !hits.contains(&enemy.id));
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
