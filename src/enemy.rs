@@ -119,3 +119,21 @@ fn create_rect(el: &Enemy) -> Rect {
         el.sprite.height() as f32 * el.scale / DOWN_SCALE,
     )
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_win_rules() {
+        assert_eq!(win_rules(EnemyVersion::Rock, EnemyVersion::Scissors), true);
+        assert_eq!(win_rules(EnemyVersion::Paper, EnemyVersion::Rock), true);
+        assert_eq!(win_rules(EnemyVersion::Scissors, EnemyVersion::Paper), true);
+        assert_eq!(win_rules(EnemyVersion::Rock, EnemyVersion::Paper), false);
+        assert_eq!(
+            win_rules(EnemyVersion::Paper, EnemyVersion::Scissors),
+            false
+        );
+        assert_eq!(win_rules(EnemyVersion::Scissors, EnemyVersion::Rock), false);
+    }
+}
