@@ -79,6 +79,8 @@ async fn main() {
             enemy.update_position(&mut new_enemies);
         }
 
+        enemies.retain(|enemy| !enemy.should_remove);
+
         // TODO: create a new loop to save all losing enemies into a new vector and remove each after
 
         next_frame().await

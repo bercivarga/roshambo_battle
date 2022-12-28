@@ -16,6 +16,7 @@ pub struct Enemy {
     sprite: Texture2D,
     scale: f32,
     pub id: usize,
+    pub should_remove: bool,
 }
 
 const DOWN_SCALE: f32 = 2.0;
@@ -39,6 +40,7 @@ impl Enemy {
             sprite,
             scale: 0.5,
             id,
+            should_remove: false,
         }
     }
 
@@ -77,6 +79,10 @@ impl Enemy {
             let direction = vec2(enemy.x - self.x, enemy.y - self.y).normalize();
             self.x += direction.x * self.speed;
             self.y += direction.y * self.speed;
+
+            if self.check_win(enemy) {
+                self.should_remove = true;
+            }
         }
     }
 
@@ -90,9 +96,9 @@ impl Enemy {
         }
 
         if win_rules(self.version.to_owned(), other.version.to_owned()) {
-            true
-        } else {
             false
+        } else {
+            true
         }
     }
 }
@@ -107,19 +113,16 @@ pub fn win_rules(ver1: EnemyVersion, ver2: EnemyVersion) -> bool {
 }
 
 pub fn collision_detection(el1: &Enemy, el2: &Enemy) -> bool {
-    let rect1 = Rect::new(
-        el1.x,
-        el1.y,
-        el1.sprite.width() as f32,
-        el1.sprite.height() as f32,
-    );
-
-    let rect2 = Rect::new(
-        el2.x,
-        el2.y,
-        el2.sprite.width() as f32,
-        el2.sprite.height() as f32,
-    );
-
+    let rect1 = create_rect(el1);
+    let rect2 = create_rect(el2);
     rect1.overlaps(&rect2)
+}
+
+fn create_rect(el: &Enemy) -> Rect {
+    Rect::new(
+        el.x,
+        el.y,
+        el.sprite.width() as f32 * el.scale / DOWN_SCALE,
+        el.sprite.height() as f32 * el.scale / DOWN_SCALE,
+    )
 }
