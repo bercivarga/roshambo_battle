@@ -7,7 +7,7 @@ use enemy::{Enemy, EnemyVersion};
 use macroquad::prelude::*;
 use player::Player;
 
-const ENEMY_COUNT: usize = 100;
+const ENEMY_COUNT: usize = 1_000;
 
 fn window_conf() -> Conf {
     Conf {
