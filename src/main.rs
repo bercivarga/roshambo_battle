@@ -76,15 +76,21 @@ async fn main() {
 
         // Need to create a copy so that we can pass reference without risking mutable references
         let mut new_enemies = enemies.to_vec();
+        let mut hits = Vec::new();
 
         // Enemy update logic
         for enemy in enemies.iter_mut() {
+            let hit = enemy.update_position(&mut new_enemies);
+
+            if let Some(id) = hit {
+                hits.push(id);
+            }
+
             enemy.draw();
-            enemy.update_position(&mut new_enemies);
         }
 
-        // Remove enemies that should be removed
-        enemies.retain(|enemy| !enemy.should_remove);
+        // Remove enemies that were hit
+        enemies.retain(|enemy| !hits.contains(&enemy.id));
 
         next_frame().await
     }

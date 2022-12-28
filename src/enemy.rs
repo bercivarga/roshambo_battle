@@ -58,12 +58,16 @@ impl Enemy {
         self
     }
 
-    pub fn update_position(&mut self, enemies: &mut Vec<Enemy>) {
+    pub fn update_position(&mut self, enemies: &mut Vec<Enemy>) -> Option<usize> {
         let mut closest_enemy = None;
         let mut closest_distance = f32::MAX;
 
+        let mut hit = None;
+
         for enemy in enemies.iter() {
-            if enemy.version == self.version {
+            let can_win = win_rules(self.version.to_owned(), enemy.version.to_owned());
+
+            if !can_win {
                 continue;
             }
 
@@ -81,16 +85,16 @@ impl Enemy {
             self.y += direction.y * self.speed;
 
             if !collision_detection(self, enemy) {
-                return;
+                return None;
             }
 
-            if win_rules(self.version.to_owned(), enemy.version.to_owned()) {
-                self.scale += 0.05;
-                self.speed -= 0.05;
-            } else {
-                self.should_remove = true;
-            }
+            self.scale += 0.05;
+            self.speed -= 0.05;
+
+            hit = Some(enemy.id);
         }
+
+        hit
     }
 }
 
