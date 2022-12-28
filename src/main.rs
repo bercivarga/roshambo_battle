@@ -53,7 +53,7 @@ async fn main() {
             EnemyVersion::Scissors => asset_loader.scissors,
         };
 
-        let enemy = Enemy::new(x, y, speed, version, sprite);
+        let enemy = Enemy::new(x, y, speed, version, sprite, enemies.len());
         enemies.push(enemy);
     }
 
@@ -71,13 +71,15 @@ async fn main() {
         set_camera(&camera);
 
         // Need to create a copy so that we can pass reference without risking mutable references
-        let new_enemies = enemies.to_vec();
+        let mut new_enemies = enemies.to_vec();
 
         // Enemy update logic
         for enemy in enemies.iter_mut() {
             enemy.draw();
-            enemy.update_position(&new_enemies);
+            enemy.update_position(&mut new_enemies);
         }
+
+        // TODO: create a new loop to save all losing enemies into a new vector and remove each after
 
         next_frame().await
     }

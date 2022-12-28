@@ -15,12 +15,20 @@ pub struct Enemy {
     pub version: EnemyVersion,
     sprite: Texture2D,
     scale: f32,
+    pub id: usize,
 }
 
 const DOWN_SCALE: f32 = 2.0;
 
 impl Enemy {
-    pub fn new(x: f32, y: f32, speed: f32, version: EnemyVersion, sprite: Texture2D) -> Self {
+    pub fn new(
+        x: f32,
+        y: f32,
+        speed: f32,
+        version: EnemyVersion,
+        sprite: Texture2D,
+        id: usize,
+    ) -> Self {
         sprite.set_filter(FilterMode::Linear);
 
         Self {
@@ -30,6 +38,7 @@ impl Enemy {
             version,
             sprite,
             scale: 0.5,
+            id,
         }
     }
 
@@ -47,7 +56,7 @@ impl Enemy {
         self
     }
 
-    pub fn update_position(&mut self, enemies: &Vec<Enemy>) -> &Self {
+    pub fn update_position(&mut self, enemies: &mut Vec<Enemy>) {
         let mut closest_enemy = None;
         let mut closest_distance = f32::MAX;
 
@@ -69,7 +78,48 @@ impl Enemy {
             self.x += direction.x * self.speed;
             self.y += direction.y * self.speed;
         }
-
-        self
     }
+
+    pub fn check_win(&self, other: &Enemy) -> bool {
+        if !collision_detection(self, other) {
+            return false;
+        }
+
+        if self.version == other.version {
+            return false;
+        }
+
+        if win_rules(self.version.to_owned(), other.version.to_owned()) {
+            true
+        } else {
+            false
+        }
+    }
+}
+
+pub fn win_rules(ver1: EnemyVersion, ver2: EnemyVersion) -> bool {
+    match (ver1, ver2) {
+        (EnemyVersion::Rock, EnemyVersion::Scissors) => true,
+        (EnemyVersion::Paper, EnemyVersion::Rock) => true,
+        (EnemyVersion::Scissors, EnemyVersion::Paper) => true,
+        _ => false,
+    }
+}
+
+pub fn collision_detection(el1: &Enemy, el2: &Enemy) -> bool {
+    let rect1 = Rect::new(
+        el1.x,
+        el1.y,
+        el1.sprite.width() as f32,
+        el1.sprite.height() as f32,
+    );
+
+    let rect2 = Rect::new(
+        el2.x,
+        el2.y,
+        el2.sprite.width() as f32,
+        el2.sprite.height() as f32,
+    );
+
+    rect1.overlaps(&rect2)
 }
