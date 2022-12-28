@@ -80,27 +80,24 @@ impl Enemy {
             self.x += direction.x * self.speed;
             self.y += direction.y * self.speed;
 
+            if !collision_detection(self, enemy) {
+                return;
+            }
+
             if self.check_win(enemy) {
-                self.should_remove = true;
+                self.should_remove = false;
+                self.speed -= 0.01;
             } else {
-                self.speed += 0.01;
+                self.should_remove = true;
             }
         }
     }
 
     pub fn check_win(&self, other: &Enemy) -> bool {
-        if !collision_detection(self, other) {
-            return false;
-        }
-
-        if self.version == other.version {
-            return false;
-        }
-
-        if win_rules(self.version.to_owned(), other.version.to_owned()) {
-            false
-        } else {
+        return if win_rules(self.version.to_owned(), other.version.to_owned()) {
             true
+        } else {
+            false
         }
     }
 }
