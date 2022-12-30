@@ -12,6 +12,7 @@ pub struct Player {
 impl Player {
     pub fn draw(&self) {
         draw_rectangle(self.x, self.y, self.width, self.height, self.color);
+        draw_text("You", self.x - 3.0, self.y + 32.0, 20.0, BLACK);
     }
 
     pub fn update_position(&mut self) -> &Self {
