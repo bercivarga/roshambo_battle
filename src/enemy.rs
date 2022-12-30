@@ -23,6 +23,9 @@ pub struct Enemy {
 const ENEMY_COUNT: usize = 1_000;
 const DOWN_SCALE: f32 = 2.0;
 
+const CONSUME_SCALE: f32 = 0.05;
+const CONSUME_SPEED: f32 = 0.02;
+
 impl Enemy {
     pub fn new(
         x: f32,
@@ -90,8 +93,8 @@ impl Enemy {
                 return None;
             }
 
-            self.scale += 0.05;
-            self.speed -= 0.05;
+            self.scale += CONSUME_SCALE;
+            self.speed += CONSUME_SPEED;
 
             hit = Some(enemy.id);
         }
