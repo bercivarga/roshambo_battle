@@ -1,11 +1,14 @@
 mod asset_loader;
 mod camera;
 mod enemy;
+mod gamestate;
 mod player;
 
+use crate::enemy::Enemy;
 use asset_loader::AssetLoader;
 use camera::Camera as PlayerCamera;
 use enemy::{generate_enemies, update_all_enemies};
+use gamestate::GameState;
 use macroquad::prelude::*;
 use player::Player;
 
@@ -14,10 +17,10 @@ use player::Player;
 fn window_conf() -> Conf {
     Conf {
         window_title: "Roshambo Battle".to_owned(),
-        fullscreen: true,
+        fullscreen: false,
         high_dpi: true,
-        window_width: 1366,
-        window_height: 768,
+        window_width: 800,
+        window_height: 600,
         ..Default::default()
     }
 }
@@ -39,16 +42,32 @@ async fn main() {
 
     let mut camera = PlayerCamera::new();
 
+    let mut gamestate = GameState::new();
+
     loop {
         clear_background(LIGHTGRAY);
 
-        // Player update logic
-        player.update_position().draw();
-        // Camera update logic
-        camera.update(&player);
+        // handle reset
+        if gamestate.needs_reset || is_key_pressed(KeyCode::R) {
+            enemies = generate_enemies(&asset_loader);
+            player.x = screen_width() / 2.0;
+            player.y = screen_height() / 2.0;
+            gamestate.needs_reset = false;
+        }
 
-        // Enemy update logic
-        update_all_enemies(&mut enemies);
+        if gamestate.is_running() {
+            // Player update logic
+            player.update_position().draw();
+            // Camera update logic
+            camera.update(&player);
+            // Enemy update logic
+            update_all_enemies(&mut enemies);
+        };
+
+        // Gamestate update logic
+        gamestate.win_checker(&enemies);
+        gamestate.update();
+        gamestate.draw();
 
         next_frame().await
     }

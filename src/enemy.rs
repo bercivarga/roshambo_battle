@@ -1,7 +1,7 @@
 use crate::asset_loader::AssetLoader;
 use macroquad::prelude::*;
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum EnemyVersion {
     Rock,
     Paper,
