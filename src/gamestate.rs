@@ -54,7 +54,7 @@ impl GameState {
         }
 
         let mut all_same = true;
-        let mut enemy_type = &enemies[0].version;
+        let enemy_type = &enemies[0].version;
         for enemy in enemies.iter() {
             if enemy.version != enemy_type.to_owned() {
                 all_same = false;
@@ -98,7 +98,7 @@ impl GameState {
         self
     }
 
-    pub fn set_start_screen(&mut self, start_screen: bool) -> &mut Self {
+    pub fn _set_start_screen(&mut self, start_screen: bool) -> &mut Self {
         self.is_start_screen = start_screen;
         self
     }

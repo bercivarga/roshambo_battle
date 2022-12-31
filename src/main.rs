@@ -4,7 +4,6 @@ mod enemy;
 mod gamestate;
 mod player;
 
-use crate::enemy::Enemy;
 use asset_loader::AssetLoader;
 use camera::Camera as PlayerCamera;
 use enemy::{generate_enemies, update_all_enemies};
